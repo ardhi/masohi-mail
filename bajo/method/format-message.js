@@ -10,22 +10,12 @@ function stripTags (html, allowed) {
   return html.replace(new RegExp('(<' + allowed + '.*?>)', 'gi'), '')
 }
 
-async function autoFormat (message) {
-  const { find } = this.app.bajo.lib._
-  const handler = find(this.app.bajo.configHandlers, { ext: '.yml' })
-  if (handler && handler.writeHandler) return await handler.writeHandler(message, true)
-  return JSON.stringify(message, null, 4)
-}
-
-async function formatMessage (message, options = {}) {
-  const { isPlainObject } = this.app.bajo.lib._
+async function formatMessage (html = '', options = {}) {
   const mpa = this.app.waibuMpa
   const stripper = mpa ? mpa.stripHtmlTags.bind(mpa) : stripTags
-  if (!isPlainObject(message)) return { text: stripper(message) }
-  let html = await autoFormat.call(this, message)
-  if (!(mpa && options.tpl && options.req)) return { text: stripper(html), html }
-  html = await mpa.render(options.tpl, message, options)
-  return { text: stripper(html), html }
+  let text = options.messageText
+  if (!text) text = stripper(html)
+  return { text, html }
 }
 
 export default formatMessage
