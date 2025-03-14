@@ -21,7 +21,7 @@ async function factory (pkgName) {
 
     init = async () => {
       const handler = async ({ item }) => {
-        const { omit, keys } = this.app.bajo.lib._
+        const { omit, keys } = this.lib._
         item.type = item.type ?? 'smtp'
         const types = keys(this.handlers)
         if (!types.includes(item.type)) throw this.error('invalidConnType%s', item.type)
