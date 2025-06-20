@@ -1,5 +1,5 @@
-import smtp from '../lib/conn/smtp.js'
-import hostinger from '../lib/conn/hostinger.js'
+import smtp from './lib/conn/smtp.js'
+import hostinger from './lib/conn/hostinger.js'
 import nodemailer from 'nodemailer'
 
 async function factory (pkgName) {
