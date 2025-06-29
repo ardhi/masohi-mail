@@ -63,17 +63,19 @@ async function factory (pkgName) {
       return { text, html }
     }
 
-    send = async (payload = {}) => {
+    send = async ({ payload = {}, conn, source } = {}) => {
       const { find } = this.lib._
-      let { to, cc, bcc, from, subject, message, conn, options = {} } = payload
       const c = find(this.connections, { name: conn })
-      if (!c) return
+      const { data } = payload
+      data.options = data.options ?? {}
       // TODO: wrong layout...
-      if (!c) throw this.error('notFound%s%s', this.print.write('connection'), `${conn}@masohiMail`)
-      from = c.options.auth.user // can't change from if using smtp
-      const { text, html } = await this.formatMessage(message, options)
-      if (options.subject) subject = options.subject
-      const resp = await c.instance.sendMail({ from, to, cc, bcc, subject, text, html })
+      if (!c) throw this.error('notFound%s%s', this.print.write('connection'), `masohiMail:${conn}`)
+      data.from = data.from ?? c.options.auth.user // can't change from if using smtp
+      const { text, html } = await this.formatMessage(data.message, data.options)
+      data.subject = data.options.subject ?? data.subject
+      data.text = text
+      data.html = html
+      const resp = await c.instance.sendMail(data)
       return resp
     }
   }

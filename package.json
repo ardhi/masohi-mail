@@ -1,6 +1,6 @@
 {
   "name": "masohi-mail",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Mail Handler for Masohi Messaging",
   "main": "index.js",
   "scripts": {
