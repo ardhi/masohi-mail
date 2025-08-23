@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer'
 async function factory (pkgName) {
   const me = this
 
-  return class MasohiMail extends this.lib.BajoPlugin {
+  return class MasohiMail extends this.lib.Plugin {
     constructor () {
       super(pkgName, me.app)
       this.alias = 'mail'
