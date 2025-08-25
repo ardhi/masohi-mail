@@ -5,11 +5,12 @@ import nodemailer from 'nodemailer'
 async function factory (pkgName) {
   const me = this
 
-  return class MasohiMail extends this.lib.Plugin {
+  class MasohiMail extends this.lib.Plugin {
+    static alias = 'mail'
+    static dependencies = ['masohi']
+
     constructor () {
       super(pkgName, me.app)
-      this.alias = 'mail'
-      this.dependencies = ['masohi']
       this.config = {
         connections: []
       }
@@ -79,6 +80,8 @@ async function factory (pkgName) {
       return resp
     }
   }
+
+  return MasohiMail
 }
 
 export default factory
