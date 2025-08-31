@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer'
 async function factory (pkgName) {
   const me = this
 
-  class MasohiMail extends this.lib.Plugin {
+  class MasohiMail extends this.app.pluginClass.base {
     static alias = 'mail'
     static dependencies = ['masohi']
 
@@ -22,7 +22,7 @@ async function factory (pkgName) {
 
     init = async () => {
       const handler = async ({ item }) => {
-        const { omit, keys } = this.lib._
+        const { omit, keys } = this.app.lib._
         item.type = item.type ?? 'smtp'
         const types = keys(this.handlers)
         if (!types.includes(item.type)) throw this.error('invalidConnType%s', item.type)
@@ -65,12 +65,12 @@ async function factory (pkgName) {
     }
 
     send = async ({ payload = {}, conn, source } = {}) => {
-      const { find } = this.lib._
+      const { find } = this.app.lib._
       const c = find(this.connections, { name: conn })
       const { data } = payload
       data.options = data.options ?? {}
       // TODO: wrong layout...
-      if (!c) throw this.error('notFound%s%s', this.print.write('connection'), `masohiMail:${conn}`)
+      if (!c) throw this.error('notFound%s%s', this.t('connection'), `masohiMail:${conn}`)
       data.from = data.from ?? c.options.auth.user // can't change from if using smtp
       const { text, html } = await this.formatMessage(data.message, data.options)
       data.subject = data.options.subject ?? data.subject
