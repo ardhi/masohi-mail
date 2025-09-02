@@ -35,7 +35,7 @@ async function factory (pkgName) {
       }
 
       const { buildCollections } = this.app.bajo
-      this.connections = await buildCollections({ ns: this.name, handler, container: 'connections' })
+      this.connections = await buildCollections({ ns: this.ns, handler, container: 'connections' })
     }
 
     start = async () => {
