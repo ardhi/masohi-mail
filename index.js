@@ -2,9 +2,20 @@ import smtp from './lib/conn/smtp.js'
 import hostinger from './lib/conn/hostinger.js'
 import nodemailer from 'nodemailer'
 
+/**
+ * Plugin factory
+ *
+ * @param {string} pkgName - NPM package name
+ * @returns {class}
+ */
 async function factory (pkgName) {
   const me = this
 
+  /**
+   * MasohiMail class
+   *
+   * @class
+   */
   class MasohiMail extends this.app.pluginClass.base {
     static alias = 'mail'
     static dependencies = ['masohi']
