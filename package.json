@@ -9,7 +9,9 @@
   },
   "type": "module",
   "bajo": {
-    "type": "plugin"
+    "type": "plugin",
+    "alias": "mmail",
+    "dependencies": ["masohi"]
   },
   "repository": {
     "type": "git",

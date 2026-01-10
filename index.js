@@ -17,9 +17,6 @@ async function factory (pkgName) {
    * @class
    */
   class MasohiMail extends this.app.baseClass.Base {
-    static alias = 'mail'
-    static dependencies = ['masohi']
-
     constructor () {
       super(pkgName, me.app)
       this.config = {
