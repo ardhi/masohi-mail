@@ -1,5 +1,4 @@
-import smtp from './lib/conn/smtp.js'
-import hostinger from './lib/conn/hostinger.js'
+import connectionHandlers from './lib/connection.js'
 import nodemailer from 'nodemailer'
 
 /**
@@ -22,10 +21,7 @@ async function factory (pkgName) {
       this.config = {
         connections: []
       }
-      this.handlers = {
-        smtp,
-        hostinger
-      }
+      this.handlers = connectionHandlers
     }
 
     init = async () => {
@@ -34,16 +30,15 @@ async function factory (pkgName) {
         item.type = item.type ?? 'smtp'
         const types = keys(this.handlers)
         if (!types.includes(item.type)) throw this.error('invalidConnType%s', item.type)
-        await this.handlers[item.type].call(this, { item })
-        const result = {
+        this.handlers[item.type].call(this, { item })
+        return {
           name: item.name,
           options: omit(item, ['type', 'name'])
         }
-        return result
       }
 
       const { buildCollections } = this.app.bajo
-      this.connections = await buildCollections({ ns: this.ns, handler, container: 'connections' })
+      this.connections = await buildCollections({ ns: this.ns, handler, container: 'connections', noDefault: false })
     }
 
     start = async () => {
@@ -64,27 +59,19 @@ async function factory (pkgName) {
       return html.replace(new RegExp('(<' + allowed + '.*?>)', 'gi'), '')
     }
 
-    formatMessage = async (html = '', options = {}) => {
+    send = async ({ payload = {}, conn = 'default', source } = {}) => {
+      const { breakNsPath } = this.app.bajo
+      const { find } = this.app.lib._
       const mpa = this.app.waibuMpa
       const stripper = mpa ? mpa.stripHtmlTags.bind(mpa) : this.stripTags
-      let text = options.messageText
-      if (!text) text = stripper(html)
-      return { text, html }
-    }
-
-    send = async ({ payload = {}, conn, source } = {}) => {
-      const { find } = this.app.lib._
-      const c = find(this.connections, { name: conn })
-      const { data } = payload
-      data.options = data.options ?? {}
+      const { path: name } = breakNsPath(conn)
+      const c = find(this.connections, { name })
       // TODO: wrong layout...
-      if (!c) throw this.error('notFound%s%s', this.t('connection'), `masohiMail:${conn}`)
-      data.from = data.from ?? c.options.auth.user // can't change from if using smtp
-      const { text, html } = await this.formatMessage(data.message, data.options)
-      data.subject = data.options.subject ?? data.subject
-      data.text = text
-      data.html = html
-      const resp = await c.instance.sendMail(data)
+      if (!c) throw this.error('notFound%s%s', this.t('connection'), `masohiMail:${name}`)
+      const input = { ...payload }
+      if (!input.text) input.text = stripper(input.html)
+      input.from = input.from ?? c.options.auth.user // can't change from if using smtp
+      const resp = await c.instance.sendMail(input)
       return resp
     }
   }

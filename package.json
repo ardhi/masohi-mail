@@ -1,6 +1,6 @@
 {
   "name": "masohi-mail",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Mail Handler for Masohi Messaging",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,7 @@
   "type": "module",
   "bajo": {
     "type": "plugin",
-    "alias": "mmail",
-    "dependencies": ["masohi"]
+    "alias": "mmail"
   },
   "repository": {
     "type": "git",
@@ -32,7 +31,7 @@
   },
   "homepage": "https://github.com/ardhi/masohi-mail#readme",
   "dependencies": {
-    "nodemailer": "^6.10.0"
+    "nodemailer": "^8.0.1"
   },
   "devDependencies": {
     "clean-jsdoc-theme": "^4.3.0",
